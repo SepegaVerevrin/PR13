@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Pr13</string>
+    <string name="download">Загрузить</string>
+    <string name="radius">radius</string>
+    <string name="dec">dec</string>
+    <string name="ra">ra</string>
 </resources>

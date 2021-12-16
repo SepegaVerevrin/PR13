@@ -19,24 +19,21 @@
             android:minWidth="128dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:hint="ra"
-            android:text="21:23:32.16"/>
+            android:hint="@string/ra"/>
 
         <EditText
             android:id="@+id/dec"
             android:minWidth="128dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:hint="dec"
-            android:text="-53:01:36.08"/>
+            android:hint="@string/dec"/>
 
         <EditText
             android:id="@+id/radius"
             android:minWidth="128dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="radius"
-            android:text="100"/>
+            android:hint="@string/radius"/>
 
 
     </LinearLayout>
@@ -44,7 +41,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Загрузить"
+        android:text="@string/download"
         android:id="@+id/load"/>
 
     <androidx.recyclerview.widget.RecyclerView

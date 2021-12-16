@@ -42,25 +42,25 @@ class ExampleUnitTest {
         database.supernovaDao().insert(
             listOf(
                 SupernovaDB(
-                    "01.01.2021"
+                    "GRB 060614A"
                 )
             )
         )
         val s = database.supernovaDao().getAll()
         assertEquals(s.size, 1)
         if (s.isNotEmpty()) {
-            assertEquals(s[0].name, "01.01.2021")
+            assertEquals(s[0].name, "GRB 060614A")
             //assertEquals(s[0].name, "Новый год")
         }
     }
+
     @Test
     fun testOutPutGetData() {
 
         database.supernovaDao().insert(
             listOf(
                 SupernovaDB(
-                    "01.01.2021",
-                    //"Новый год"
+                    "GRB 060614A"
                 )
             )
         )

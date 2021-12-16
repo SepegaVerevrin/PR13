@@ -10,7 +10,7 @@ class ShowSupernovaActivity : AppCompatActivity() {
         setContentView(R.layout.activity_show_country)
 
         val supernova = intent.getSerializableExtra("SUPERNOVA") as Supernova
-        findViewById<TextView>(R.id.name).text = supernova.name
+        findViewById<TextView>(R.id.name).text = supernova.name!![0]
     }
 }
 

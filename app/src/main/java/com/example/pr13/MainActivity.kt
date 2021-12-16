@@ -1,6 +1,5 @@
 package com.example.pr13
-// Осуществите поиск всех объектов на данном расстоянии в световых
-//секундах от заданной точки.
+// Осуществите поиск всех объектов на данном расстоянии в световых секундах от заданной точки.
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -26,6 +25,8 @@ class SupernovaeAdapter(val supernovae:List<Supernova>, val mainActivity:MainAct
 
     class SupernovaHolder(val view: ViewGroup) : RecyclerView.ViewHolder(view)
 
+    fun getList() = supernovae
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -38,7 +39,7 @@ class SupernovaeAdapter(val supernovae:List<Supernova>, val mainActivity:MainAct
 
     override fun onBindViewHolder(holder: SupernovaeAdapter.SupernovaHolder, position: Int) {
         val supernova = supernovae[position]
-        holder.view.findViewById<TextView>(R.id.name).text = supernova.name
+        holder.view.findViewById<TextView>(R.id.name).text = if (supernova.name!!.isNotEmpty()) supernova.name!![0] else "noname"
 
         // view addition info
         holder.view.setOnClickListener {
@@ -51,9 +52,9 @@ class SupernovaeAdapter(val supernovae:List<Supernova>, val mainActivity:MainAct
 }
 
 
-data class WrapperProducts(
-val ar:Map<String,Map<String,Array<Supernova>>> = mapOf("GRB 060614A" to mapOf("name" to arrayOf("GRB 060614A" as Supernova)) )
-){}
+//data class WrapperProducts(
+//val ar:Map<String,Map<String,Array<Supernova>>> = mapOf("GRB 060614A" to mapOf("name" to arrayOf("GRB 060614A" as Supernova)) )
+//){}
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             val listForRecyclerView = list!!.map { Supernova().apply {
-                name=it.name
+                name= arrayOf(it.name)
             } }
 
             recyclerView.adapter = SupernovaeAdapter(listForRecyclerView, this@MainActivity)
@@ -102,18 +103,18 @@ class MainActivity : AppCompatActivity() {
 
             val service = retrofit.create(RestSupernovae::class.java)
 
-            val call = service.getSupernovaeByRaDecRadius("ra=${ra}&dec=${dec}&radius=${radius}")
+            val call = service.getSupernovaeByRaDecRadius(ra,dec,radius)
 
-            call.enqueue(object : Callback<Map<String,Map<String,Array<Supernova>>>> {
+            call.enqueue(object : Callback<Map<String,Supernova>> {
 
-                override fun onResponse( call: Call<Map<String,Map<String,Array<Supernova>>>>, response: Response<Map<String,Map<String,Array<Supernova>>>> ) { // <Map<String,Supernova>>
+                override fun onResponse( call: Call<Map<String,Supernova>>, response: Response<Map<String,Supernova>> ) { // <Map<String,Supernova>>
 
                     recyclerView.post { // передаем l-функцию, которая выполняется в потоке с вводом-выводом
 
                         // 1 get data
-                        val list = response.body()!!.map { it.value.get("name")!![0]  }.get(0) // подмена сайта?
+                        val list = response.body()!! // подмена сайта?
 
-                        recyclerView.adapter = SupernovaeAdapter(listOf(list), this@MainActivity)
+                        recyclerView.adapter = SupernovaeAdapter(list.values.toList(), this@MainActivity)
                         recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
 
 
@@ -122,9 +123,11 @@ class MainActivity : AppCompatActivity() {
 
                             db.supernovaDao().clear()
                             db.supernovaDao().insert(
-                                list.name!!.map {
+                                list.values.map {
                                     SupernovaDB(
-                                        it.toString()
+                                        if (it.name!!.isNotEmpty())
+                                            it.name!![0]
+                                        else ""
                                     )
                                 }
                             )
@@ -134,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<Map<String,Map<String,Array<Supernova>>>>, t: Throwable) {
+                override fun onFailure(call: Call<Map<String,Supernova>>, t: Throwable) {
                     recyclerView.post {
                         Toast.makeText(
                             this@MainActivity,
@@ -145,7 +148,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
             })
-
             //}).start()
         }
 
